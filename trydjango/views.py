@@ -6,10 +6,6 @@ from django.shortcuts import render
 from articles.models import Article
 from articles.forms import ArticleForm
 from . import views
-    
-
-def article_home_view(request):
-    return HttpResponse()
 
 
 def home(request):
@@ -70,7 +66,7 @@ def article_create_view(request):
     }
     if form.is_valid():
         article_object = form.save()
-        context['form']= ArticleForm()
+        context['form'] = ArticleForm()
         #context['object'] = article_object
         #context['created'] = True
     return render(request, "articles/create.html", context)

@@ -17,18 +17,18 @@ Including another URLconf
 
 from . import views
 from django.contrib import admin
-from django.urls import path ,re_path
+from django.urls import path, re_path
 from accounts.views import(
-    login_view, logout_view,register_view
+    login_view, logout_view, register_view
 )
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login_view),
-    path('logout/',logout_view),
-    path('',views.home),
+    path('logout/', logout_view),
+    path('', views.home),
     path('articles/', views.article_search_view),
     path('articles/create/', views.article_create_view),
-    path('articles/<int:id>', views.article_detail_view), 
+    path('articles/<int:id>', views.article_detail_view),
 ]
