@@ -5,11 +5,12 @@ from django.shortcuts import render, redirect
 
 
 def login_view(request):
-
+    if request.user.is_authenticated:
+        return render(request, 'accounts/login', {})
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-        # print(username,password)
+
         user = authenticate(request, username=username, password=password)
         if user is None:
             context = {"error": "Invalid username or password"}
@@ -18,7 +19,7 @@ def login_view(request):
         return redirect('/')
     return render(request, "accounts/login.html", {})
 
-
+ 
 def logout_view(request):
     if request.method == "POST":
         logout(request)

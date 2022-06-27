@@ -18,9 +18,13 @@ class ArticleFormOld(forms.Form):
 def clean(self):
     data=self.cleaned_data
     title=data.get("title")
-    qs =Article.objects.filter(title__icontains=title)
-    if qs.exists():
-        self.add_error("title", f"{title} is alredy in use.")
+    content = data.get("content")
+    # qs =Article.objects.filter(title__icontains=title)
+    if title.lower().strip() == 'The first one':
+        self.add_error("title","This title is taken")
+    if content.lower.strip() == "Short explanation":
+        self.add_error("content", "This content is taken")
+        raise forms.ValidationError("Short explanation is not allowed")
     return data
 
 
