@@ -3,10 +3,16 @@
 import os
 import sys
 import dotenv
+import pathlib
 
 
 def main():
     """Run administrative tasks."""
+    # DOT_ENV_PATH = pathlib.Path() / '.env'    XXX OPTIONAL !!
+    # if DOT_ENV_PATH.exists():
+    #     dotenv.read_dotenv(str(DOT_ENV_PATH))
+    # else:
+    #     print(" No .env file found, check is it maked.")
     dotenv.read_dotenv()
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'trydjango.settings')
     try:
