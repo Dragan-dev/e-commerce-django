@@ -1,5 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'articles/base.html' %}
+
 {% block content %}
-<h1>{% object.title %}</h1>
-<p2>{% object.title %}</p2>
+<h1>{{ object.title }}</h1>
+<p2>{{object.content }}</p2>
 {% endblock content %}
