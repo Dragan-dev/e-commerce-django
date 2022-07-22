@@ -48,14 +48,16 @@ def article_search_view(request):
     return render(request, "articles/search.html", context=context)
 
 
-def article_detail_view(request, id=None):
+def article_detail_view(request, slug=None):
     article_object = None
-    if id is not None:
-        article_object = Article.objects.get(id=id)
+    if slug is not None:
+        article_object = Article.objects.get(slug=slug)
     context = {
         "object": article_object
     }
-    return render(request, "articles/detail.html", context)
+    return render(request, "articles/detail.html", context=context)
+    
+    
 
 
 @login_required
