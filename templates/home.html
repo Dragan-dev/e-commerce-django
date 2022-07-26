@@ -5,11 +5,15 @@
 <h1>{{ object.id }}</h1>
 <h3>{{ object.content }}</h3>
 <p2>{{ object.title }}</p2>
+<a href='{%url "article-create" %}'> Create Article</a><div></div>
+<a href='{%url "article-detail" slug="30-article-118" %}'> 30 article</a>
+
+
 
 <ul>
     {% for x in object_list %}
         {% if x.title %}  
-            <li><a href='/articles/{{x.slug}}'>{{ x.title }} </a> </li>
+            <li><a href='{{ x.get_absolute_url }}'>{{ x.title }} </a> </li>
         {% endif %}
     {% endfor %}
 </ul>
