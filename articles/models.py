@@ -2,7 +2,25 @@ from django.db.models.signals import pre_save, post_save
 from django.db import models
 from django.utils import timezone
 from .utils import slugify_instance_title
+from django.urls import reverse
+from django.db.models import Q
 
+
+class ArticleQuerySet(models.QuerySet):
+    def search(self,query = None):
+        if query is None or query  == "":
+            return self.none()
+        lookups = Q(title__icontains = query)|Q(content__icontains=query)
+        return self.filter(lookups)
+
+
+class ArticleMAnager(models.Manager):
+
+    def get_queryset(self):
+        return ArticleQuerySet(self.model , using=self._db)
+
+    def search(self,query=None):
+        return self.get_queryset().search(query=query )
 
 
 class Article(models.Model):
@@ -13,11 +31,19 @@ class Article(models.Model):
     updated = models.DateTimeField(auto_now=True)
     published = models.DateField(
         auto_now=False, auto_now_add=False, default=timezone.now, blank=True, null=True)
+    
+    objects = ArticleMAnager()
+
+
+    def get_absolute_url(self):
+        return reverse ("article-detail", kwargs={"slug":self.slug})
+
 
     def save(self, *args, **kwargs):
-        # if self.slug is None:
-        # self.slug=slugify(self.title)
         super().save(*args, **kwargs)
+    # if self.slug is None:
+    # self.slug=slugify(self.title)
+    
 
 
 def article_pre_save(sender, instance, *args, **kwargs):
