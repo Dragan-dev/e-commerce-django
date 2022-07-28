@@ -1,4 +1,4 @@
-from .utils import slugify
+from .utils import slugify, slugify_instance_title
 from django.test import TestCase
 
 # Create your tests here.
@@ -8,10 +8,10 @@ from . models import Article
 class ArticleTestCase(TestCase):
 
     def setUp(self):
-        self.num_of_articles = 5
+        self.num_of_articles = 50
         for i in range(self.num_of_articles):
             Article.objects.create(
-                title=' Testing case title', content='Testing case content')
+                title='Testing case title', content='Testing case content')
 
     def test_qs_exists(self):
         qs = Article.objects.all()
@@ -28,10 +28,32 @@ class ArticleTestCase(TestCase):
         slugified_title = slugify(title)
         self.assertEqual(slug, slugified_title)
 
-    def test_hw_slug(self):
-        qs = Article.objects.exclude(slug__iexact__= 'hello world')
+    def test_hw_unique_slug(self):
+        qs = Article.objects.exclude(slug__iexact__='hello world')
         for obj in qs:
             title = obj.title
             slug = obj.slug
             slugified_title = slugify(title)
-            self.assertNotEquals(slug, slugified_title) 
+            self.assertNotEquals(slug, slugified_title)
+
+    def slugify_instance_unique_title(self):
+        obj = Article.objects.all().last()
+        new_slugs = []
+        for i in range(0, 25):
+            instance_slug = slugify_instance_title(obj, save=False)
+            new_slugs.append(instance_slug)
+        unique_slugs = list(set(new_slugs))
+        self.assertEqual(len(new_slugs), len(unique_slugs))
+
+    def test_slugify_instance_title_redux(self):
+        slug_list = Article.objects.all().values_list('slug', flat=True)
+        unique_slug_list = list(set(slug_list))
+        self.assertEqual(len(unique_slug_list), len(slug_list))
+
+    def test_article_search_manager(self):
+        qs = Article.objects.search(query = 'Testing case title')
+        self.assertEqual(qs.count(), self.num_of_articles)
+        qs = Article.objects.search(query = 'case')
+        self.assertEqual(qs.count(), self.num_of_articles)
+        qs = Article.objects.search(query = 'Testing case content')
+        self.assertEqual(qs.count(), self.num_of_articles)
