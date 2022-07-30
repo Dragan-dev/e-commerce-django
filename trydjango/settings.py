@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'articles',
     'accounts',
+    'recipe',
 ]
 
 STATICFILES_FINDERS = [
