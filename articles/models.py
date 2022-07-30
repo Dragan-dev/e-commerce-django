@@ -1,9 +1,13 @@
+from django.conf import settings
 from django.db.models.signals import pre_save, post_save
 from django.db import models
 from django.utils import timezone
 from .utils import slugify_instance_title
 from django.urls import reverse
 from django.db.models import Q
+
+
+User = settings.AUTH_USER_MODEL
 
 
 class ArticleQuerySet(models.QuerySet):
@@ -15,7 +19,7 @@ class ArticleQuerySet(models.QuerySet):
 
 
 class ArticleMAnager(models.Manager):
-
+    
     def get_queryset(self):
         return ArticleQuerySet(self.model , using=self._db)
 
@@ -24,6 +28,7 @@ class ArticleMAnager(models.Manager):
 
 
 class Article(models.Model):
+    user = models.ForeignKey(User, blank=True, null= True, on_delete = models.SET_NULL)
     title = models.CharField(max_length=250)
     slug = models.SlugField(unique=True, blank=True, null=True)
     content = models.TextField()
