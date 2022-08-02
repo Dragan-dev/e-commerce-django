@@ -13,7 +13,7 @@ class Recipe(models.Model):
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
 
-class RecipeIngredients(models.Model):
+class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe,on_delete=models.CASCADE)
     name = models.CharField(max_length = 220)
     description = models.TextField(blank = True, null = True)
