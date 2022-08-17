@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from .models import Recipe, RecipeIngredient
@@ -39,11 +40,6 @@ class RecipeTestCase(TestCase):
 
         )
 
-
-
-
-
-
     def test_user(self):
         qs = User.objects.all()
         self.assertEqual(qs.count(), 1)
@@ -60,21 +56,48 @@ class RecipeTestCase(TestCase):
 
     def test_recipe_ingredients_reverse_count(self):
         recipe = self.recipe_a
-        qs = recipe.recipeingredient_set.all()  # >recipeingredient< must be the same as model name RecipeIngredient but lowercase
+        # >recipeingredient< must be the same as model name RecipeIngredient but lowercase
+        qs = recipe.recipeingredient_set.all()
         self.assertEqual(qs.count(), 1)
 
     def test_recipe_ingredientcount(self):
         recipe = self.recipe_a
-        qs = RecipeIngredient.objects.filter(recipe = recipe)
+        qs = RecipeIngredient.objects.filter(recipe=recipe)
         self.assertEqual(qs.count(), 1)
 
     def test_user_two_level_relation(self):
         user = self.user_a
-        qs = RecipeIngredient.objects.filter(recipe__user = user)
+        qs = RecipeIngredient.objects.filter(recipe__user=user)
         self.assertEqual(qs.count(), 1)
-    
+
     def test_user_two_level_relation_reverse(self):
         user = self.user_a
-        recipeingredient_ids = list(user.recipe_set.all().values_list('recipeingredient__id', flat = True))
-        qs = RecipeIngredient.objects.filter(id__in = recipeingredient_ids)
+        recipeingredient_ids = list(user.recipe_set.all(
+        ).values_list('recipeingredient__id', flat=True))
+        qs = RecipeIngredient.objects.filter(id__in=recipeingredient_ids)
         self.assertEqual(qs.count(), 1)
+
+
+    def test_unit_measure_validation(self):
+        invalid_unit = 'ounce'
+        ingredient = RecipeIngredient(
+            name='New',
+            quantity=10,
+            recipe=self.recipe_a,
+            unit=invalid_unit
+        )
+        ingredient.full_clean()  # same as form.is_valid()
+
+
+
+    def test_unit_measure_validation_error(self):
+        invalid_units = ['falseUnit','anotherUnit']
+        with self.assertRaises(ValidationError):
+            for unit in invalid_units:
+                ingredient = RecipeIngredient(
+                name='New',
+                quantity=10,
+                recipe=self.recipe_a,
+                unit=unit
+        )   
+        ingredient.full_clean()  
